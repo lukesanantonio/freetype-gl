@@ -5,32 +5,18 @@
 
 cmake_minimum_required(VERSION 2.8.12)
 
-project(freetype-gl LANGUAGES C CXX)
+cmake_policy(SET CMP0048 NEW)
+project(freetype-gl LANGUAGES C CXX VERSION "")
 
 set(CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules"
     "${CMAKE_MODULE_PATH}"
 )
 
-message(STATUS "Building for ${CMAKE_SYSTEM_NAME} target system")
-message(STATUS "Building with ${CMAKE_C_COMPILER_ID} compiler")
-
-set(freetype-gl_WITH_GLEW_DEFAULT ON)
-
 if((${CMAKE_SYSTEM_NAME} MATCHES "Darwin") OR
     (${CMAKE_SYSTEM_NAME} MATCHES "Android"))
     set(freetype-gl_WITH_GLEW_DEFAULT OFF)
 endif()
-
-option(freetype-gl_WITH_GLEW
-    "Use the GLEW library to fetch OpenGL function pointers"
-    ${freetype-gl_WITH_GLEW_DEFAULT})
-option(freetype-gl_USE_VAO "Use a VAO to render a vertex_buffer instance (required for forward compatible OpenGL 3.0 contexts)" OFF)
-option(freetype-gl_BUILD_DEMOS "Build the freetype-gl example programs" ON)
-option(freetype-gl_BUILD_APIDOC "Build the freetype-gl API documentation" ON)
-option(freetype-gl_BUILD_HARFBUZZ "Build the freetype-gl harfbuzz support (experimental)" OFF)
-option(freetype-gl_BUILD_MAKEFONT "Build the makefont tool" ON)
-option(freetype-gl_BUILD_TESTS "Build the tests" ON)
 
 include(RequireIncludeFile)
 include(RequireFunctionExists)
@@ -84,9 +70,7 @@ endif()
 find_package(OpenGL REQUIRED)
 find_package(Freetype REQUIRED)
 
-if(freetype-gl_WITH_GLEW)
-    find_package(GLEW REQUIRED)
-endif()
+find_package(GLEW REQUIRED)
 
 include_directories(
     ${OPENGL_INCLUDE_DIRS}
@@ -100,9 +84,7 @@ if(MSVC)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE)
 endif(MSVC)
 
-if(freetype-gl_USE_VAO)
-    add_definitions(-DFREETYPE_GL_USE_VAO)
-endif(freetype-gl_USE_VAO)
+add_definitions(-DFREETYPE_GL_USE_VAO)
 
 set(FREETYPE_GL_HDR
     distance-field.h
@@ -140,38 +122,3 @@ add_library(freetype-gl STATIC
     ${FREETYPE_GL_SRC}
     ${FREETYPE_GL_HDR}
 )
-
-if(freetype-gl_BUILD_MAKEFONT)
-    add_executable(makefont makefont.c)
-
-    target_link_libraries(makefont
-        freetype-gl
-        ${OPENGL_LIBRARY}
-        ${FREETYPE_LIBRARIES}
-        ${MATH_LIBRARY}
-        ${GLEW_LIBRARY}
-    )
-
-    if(MSVC AND NOT (MSVC_VERSION LESS 1900))
-        # prevent error LNK2019: unresolved external symbol _sprintf referenced in function __bdf_parse_properties
-        # see http://stackoverflow.com/a/32418900/469659
-        target_link_libraries(makefont "legacy_stdio_definitions.lib")
-    endif()
-endif()
-
-if(freetype-gl_BUILD_APIDOC)
-    add_subdirectory(doc)
-endif()
-
-if(freetype-gl_BUILD_HARFBUZZ)
-    add_subdirectory(harfbuzz)
-endif()
-
-if(freetype-gl_BUILD_DEMOS)
-    add_subdirectory(demos)
-endif()
-
-if(freetype-gl_BUILD_TESTS)
-    enable_testing()
-    add_subdirectory(tests)
-endif(freetype-gl_BUILD_TESTS)

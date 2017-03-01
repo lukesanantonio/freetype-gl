@@ -1,52 +1,15 @@
 # Freetype GL - A C OpenGL Freetype engine
 
-[![Build Status Travis](https://travis-ci.org/rougier/freetype-gl.png?branch=master)](https://travis-ci.org/rougier/freetype-gl)
-[![Build Status Appveyor](https://ci.appveyor.com/api/projects/status/github/rougier/freetype-gl?branch=master)](https://ci.appveyor.com/project/rougier/freetype-gl)
-
 A small library for displaying Unicode in OpenGL using a single texture and
 a single vertex buffer.
 
-![Screenshot](http://raw.github.com/rougier/freetype-gl/master/doc/images/markup.png)
+This repository is a small, no-frills distribution of freetype-gl for easy
+integration with CMake projects. It removes the tests, demos, and the associated
+assets. The CMakeLists.txt is also simplified, albeit slightly opinionated:
+freetype-gl is instructed to always use OpenGL VAOs but this can easily be
+changed for your needs.
 
-[Installation instructions](INSTALL.md).
-
-## Code organization
-
-### Mandatory files
-
-* **texture-font**:  The texture-font structure is in charge of creating bitmap
-                     glyphs and to upload them to the texture atlas.
-
-* **texture-atlas**: This structure is responsible for the packing of small
-                     regions into a bigger texture. It is based on the skyline
-                     bottom left algorithm which appear to be well suited for
-                     storing glyphs. More information at:
-                     http://clb.demon.fi/files/RectangleBinPack.pdf
-
-* **vector**:        This structure loosely mimics the std::vector class from
-                     c++. It is used by texture-atlas (for storing nodes),
-                     texture-font (for storing glyphs) and font-manager (for
-                     storing fonts). More information at:
-                     http://www.cppreference.com/wiki/container/vector/start
-
-
-### Optional files
-
-* **markup**:        Simple structure that describes text properties (font
-                     family, font size, colors, underline, etc.)
-
-* **font-manager**:  Structure in charge of caching fonts.
-
-* **vertex-buffer**: Generic vertex buffer structure inspired by pyglet
-                     (python). (more information at http://www.pyglet.org)
-
-* **edtaa3func**:    Distance field computation by Stefan Gustavson
-                     (more information at http://contourtextures.wikidot.com/)
-
-* **makefont**:      Allow to generate header file with font information
-                     (texture + glyphs) such that it can be used without
-                     freetype.
-
+[See the official repository for details!](http://github.com/rougier/freetype-gl)
 
 ## Contributors
 
